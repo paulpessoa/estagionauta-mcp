@@ -2,6 +2,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerCalculateRecess } from "./tools/calculate-recess.js";
 import { registerSearchAgencies } from "./tools/search-agencies.js";
 import { registerGetAgencyDetails } from "./tools/get-agency-details.js";
+import { registerCheckCredits } from "./tools/check-credits.js";
+import { registerRedeemCoupon } from "./tools/redeem-coupon.js";
 
 /**
  * Creates and configures the Estagionauta MCP Server.
@@ -19,6 +21,9 @@ export function createServer(): McpServer {
   registerCalculateRecess(server);
   registerSearchAgencies(server);
   registerGetAgencyDetails(server);
+  registerCheckCredits(server);
+  registerRedeemCoupon(server);
 
   return server;
 }
+
