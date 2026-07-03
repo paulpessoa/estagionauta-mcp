@@ -1,11 +1,25 @@
 /**
- * HTTP client for the Estagionauta API.
- * Makes server-to-server requests to the Hono.js backend.
+ * Safely resolves the API URL across different environments (Node, Cloudflare Workers, etc.)
  */
+function getApiUrl(): string {
+  try {
+    if (typeof process !== "undefined" && process.env && process.env.ESTAGIONAUTA_API_URL) {
+      return process.env.ESTAGIONAUTA_API_URL;
+    }
+  } catch {
+    // Ignore ReferenceErrors in strict environments
+  }
 
-const API_URL =
-  process.env.ESTAGIONAUTA_API_URL ||
-  "https://estagionauta-api-991344207740.southamerica-east1.run.app";
+  try {
+    if (typeof globalThis !== "undefined" && (globalThis as any).ESTAGIONAUTA_API_URL) {
+      return (globalThis as any).ESTAGIONAUTA_API_URL;
+    }
+  } catch {
+    // Ignore
+  }
+
+  return "https://estagionauta-api-991344207740.southamerica-east1.run.app";
+}
 
 interface ApiResponse<T = unknown> {
   success?: boolean;
@@ -21,7 +35,8 @@ export async function apiGet<T = ApiResponse>(
   params?: Record<string, string>,
   token?: string
 ): Promise<T> {
-  const url = new URL(`${API_URL}${path}`);
+  const apiUrl = getApiUrl();
+  const url = new URL(`${apiUrl}${path}`);
 
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
@@ -60,7 +75,8 @@ export async function apiPost<T = ApiResponse>(
   body?: Record<string, unknown>,
   token?: string
 ): Promise<T> {
-  const url = new URL(`${API_URL}${path}`);
+  const apiUrl = getApiUrl();
+  const url = new URL(`${apiUrl}${path}`);
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
