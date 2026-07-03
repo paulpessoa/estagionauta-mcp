@@ -4,6 +4,8 @@ import { registerSearchAgencies } from "./tools/search-agencies.js";
 import { registerGetAgencyDetails } from "./tools/get-agency-details.js";
 import { registerCheckCredits } from "./tools/check-credits.js";
 import { registerRedeemCoupon } from "./tools/redeem-coupon.js";
+import { registerCheckCandidatures } from "./tools/check-candidatures.js";
+import { registerCandidaturaStats } from "./tools/candidatura-stats.js";
 
 /**
  * Creates and configures the Estagionauta MCP Server.
@@ -23,7 +25,10 @@ export function createServer(): McpServer {
   registerGetAgencyDetails(server);
   registerCheckCredits(server);
   registerRedeemCoupon(server);
+  registerCheckCandidatures(server);
+  registerCandidaturaStats(server);
 
   return server;
 }
+
 
