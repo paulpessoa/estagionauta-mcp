@@ -1,0 +1,41 @@
+{
+  "name": "estagionauta-mcp",
+  "version": "0.1.0",
+  "description": "MCP Server for Estagionauta — AI-powered internship tools for Brazilian students. Calculate recess, search agencies, and more via Claude, Gemini, or any MCP-compatible AI.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "estagionauta-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "inspector": "npx @modelcontextprotocol/inspector node dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "internship",
+    "estagio",
+    "brazil",
+    "claude",
+    "gemini",
+    "cursor"
+  ],
+  "author": "Paul Pessoa <paulpessoa@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paulpessoa/estagionauta-mcp"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "typescript": "^5.8.3"
+  }
+}
