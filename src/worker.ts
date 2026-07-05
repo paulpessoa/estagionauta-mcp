@@ -1,9 +1,6 @@
 import { createServer } from "./server.js";
 import { createMcpHandler } from "agents/mcp";
 
-const server = createServer();
-const mcpHandler = createMcpHandler(server);
-
 /**
  * Cloudflare Worker entry point.
  * Intercepts normal browser requests (HTML) to serve a setup instructions page,
@@ -142,7 +139,11 @@ export default {
       );
     }
 
-    // Direct other HTTP traffic (SSE connections and tool POST requests) to the MCP Handler
+    // Create a fresh MCP server instance per request.
+    // The MCP SDK does NOT allow connecting an already-connected server to a new transport.
+    // Reusing a singleton server causes "Worker threw exception" (Cloudflare Error 1101).
+    const server = createServer();
+    const mcpHandler = createMcpHandler(server);
     return mcpHandler(request, env, ctx);
   },
 };
