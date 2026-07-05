@@ -8,24 +8,58 @@
 
 Connect your AI assistant (Claude, Gemini, Cursor, Windsurf, or any MCP-compatible client) to **Estagionauta** — a platform that helps Brazilian students land their first internship.
 
+You can connect to this server either **locally** (via command/stdio) or **remotely** (via Server-Sent Events (SSE) hosted on Cloudflare Workers).
+
 ## ✨ Available Tools
 
 | Tool | Description | Auth Required |
 |:-----|:------------|:--------------|
 | `calculate_recess` | Calculate internship recess (vacation) days and payment based on Brazilian Internship Law (Lei nº 11.788/2008) | ❌ No |
-| `search_agencies` | Search internship agencies (CIEE, NUBE, IEL, etc.) by state, city, type, or name | ❌ No |
+| `search_agencies` | Search approved internship agencies (CIEE, NUBE, IEL, etc.) by state, city, type, or name | ❌ No |
 | `get_agency_details` | Get detailed info and student reviews for a specific agency | ❌ No |
+| `check_credits` | Check your Estagionauta credit balance and subscription status | 🔑 Yes |
+| `redeem_coupon` | Redeem a promotional credit coupon on Estagionauta | 🔑 Yes |
+| `check_candidatures` | List your active internship applications (candidaturas) on your Kanban board | 🔑 Yes |
+| `candidatura_stats` | Get general metrics and statistics from your Kanban board | 🔑 Yes |
+
+> [!NOTE]  
+> **Authentication:** Tools that require authentication (`Auth Required: Yes`) expect your Estagionauta Access Token (JWT). You can easily copy this token in your browser by logging into [estagionauta.com.br](https://estagionauta.com.br), heading to **Configurações da Conta** (Account Settings), and clicking "Copiar Token".
 
 ## 🚀 Quick Start
 
-### Claude Desktop
+### Method A: Remote Server-Sent Events (SSE) — Recommended (No Node.js required)
 
-Add to your `claude_desktop_config.json`:
+Configure your client to connect to the hosted URL:
+`https://estagionauta-mcp.paulmspessoa.workers.dev/mcp`
 
+#### Claude Desktop (SSE)
+Add this to your `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "estagionauta": {
+    "estagionauta-mcp": {
+      "url": "https://estagionauta-mcp.paulmspessoa.workers.dev/mcp"
+    }
+  }
+}
+```
+
+#### Claude Code (SSE)
+Run this in your terminal:
+```bash
+claude mcp add estagionauta-mcp sse https://estagionauta-mcp.paulmspessoa.workers.dev/mcp
+```
+
+---
+
+### Method B: Local execution (via npm/npx)
+
+#### Claude Desktop (Local)
+Add this to your `claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "estagionauta-local": {
       "command": "npx",
       "args": ["-y", "estagionauta-mcp"]
     }
@@ -33,31 +67,11 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
-### Gemini CLI
-
-```bash
-gemini mcp add estagionauta -- npx -y estagionauta-mcp
-```
-
-### Cursor
-
-Go to **Settings → MCP Servers → Add** and enter:
-
-```json
-{
-  "command": "npx",
-  "args": ["-y", "estagionauta-mcp"]
-}
-```
-
-### Windsurf / Cline / Continue
-
-Follow your IDE's MCP configuration docs and use:
-
-```
-command: npx
-args: -y estagionauta-mcp
-```
+#### Cursor
+Go to **Settings → Features → MCP**, click **Add New MCP Server** and enter:
+- **Name:** `estagionauta`
+- **Type:** `command`
+- **Command:** `npx -y estagionauta-mcp`
 
 ## 💬 Example Prompts
 
