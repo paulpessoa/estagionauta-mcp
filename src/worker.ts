@@ -14,11 +14,10 @@ export default {
     const url = new URL(request.url);
     const acceptHeader = request.headers.get("Accept") || "";
 
-    // Check if it is a standard web browser request for the root page
+    // Check if it is a standard web browser request instead of an MCP connection
     if (
       request.method === "GET" &&
-      !acceptHeader.includes("text/event-stream") &&
-      (url.pathname === "/" || url.pathname === "")
+      !acceptHeader.includes("text/event-stream")
     ) {
       return new Response(
         `<!DOCTYPE html>
