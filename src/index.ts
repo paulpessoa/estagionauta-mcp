@@ -12,9 +12,11 @@ import { createServer } from "./server.js";
  * Usage:
  *   npx estagionauta-mcp
  *   node dist/index.js
+ *
+ * Set ESTAGIONAUTA_TOKEN to avoid passing the token on every tool call.
  */
 async function main() {
-  const server = createServer();
+  const server = createServer(process.env.ESTAGIONAUTA_TOKEN);
   const transport = new StdioServerTransport();
 
   await server.connect(transport);

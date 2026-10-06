@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { apiGet } from "../lib/api-client.js";
+import { apiGet, requireToken } from "../lib/api-client.js";
 
 interface Application {
   id: string;
@@ -14,18 +14,20 @@ interface Application {
  * Computes metrics and success index based on Kanban applications.
  * Calls GET /api/kanban.
  */
-export function registerCandidaturaStats(server: McpServer): void {
+export function registerCandidaturaStats(server: McpServer, authToken?: string): void {
   server.tool(
     "candidatura_stats",
     "Get general metrics, metrics by status, and overall internship search statistics from your Kanban board.",
     {
       token: z
         .string()
-        .describe("Your Estagionauta access token (JWT) for authentication"),
+        .optional()
+        .describe("Your Estagionauta access token (JWT). Optional when the connection already sends an Authorization header"),
     },
     async ({ token }) => {
       try {
-        const data = await apiGet<Application[]>("/api/kanban", undefined, token);
+        const jwt = requireToken(token, authToken);
+        const data = await apiGet<Application[]>("/api/kanban", undefined, jwt);
 
         if (!Array.isArray(data) || data.length === 0) {
           return {

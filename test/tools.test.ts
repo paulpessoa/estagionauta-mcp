@@ -5,10 +5,10 @@ import { createServer } from "../src/server.js";
 
 const API = "https://estagionauta-api-991344207740.southamerica-east1.run.app";
 
-async function connect() {
+async function connect(authToken?: string) {
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   const client = new Client({ name: "test", version: "0.0.0" });
-  await Promise.all([createServer().connect(serverTransport), client.connect(clientTransport)]);
+  await Promise.all([createServer(authToken).connect(serverTransport), client.connect(clientTransport)]);
   return client;
 }
 
@@ -99,5 +99,22 @@ describe("estagionauta-mcp tools", () => {
 
     expect(result.isError).toBe(true);
     expect(textOf(result)).toMatch(/400/);
+  });
+
+  it("uses the connection token when the tool call omits it", async () => {
+    fetchMock.mockResolvedValue(jsonResponse([]));
+    const client = await connect("header-jwt");
+    await client.callTool({ name: "check_candidatures", arguments: {} });
+
+    expect(fetchMock.mock.calls[0][1].headers.Authorization).toBe("Bearer header-jwt");
+  });
+
+  it("returns an error without any token", async () => {
+    const client = await connect();
+    const result = await client.callTool({ name: "candidatura_stats", arguments: {} });
+
+    expect(result.isError).toBe(true);
+    expect(textOf(result)).toMatch(/Missing authentication token/);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

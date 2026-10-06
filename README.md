@@ -24,6 +24,12 @@ You can connect to this server either **locally** (via command/stdio) or **remot
 
 > [!NOTE]  
 > **Authentication:** Tools that require authentication (`Auth Required: Yes`) expect your Estagionauta Access Token (JWT). You can easily copy this token in your browser by logging into [estagionauta.com.br](https://estagionauta.com.br), heading to **Configurações da Conta** (Account Settings), and clicking "Copiar Token".
+>
+> To avoid pasting the token into the chat, send it once per connection instead — the `token` argument then becomes optional:
+> - **Remote (SSE):** `claude mcp add --transport sse estagionauta-mcp https://estagionauta-mcp.paulmspessoa.workers.dev/mcp --header "Authorization: Bearer <TOKEN>"`
+> - **Local (stdio):** set the `ESTAGIONAUTA_TOKEN` environment variable (e.g. `"env": { "ESTAGIONAUTA_TOKEN": "<TOKEN>" }` in `claude_desktop_config.json`).
+>
+> Note: the token expires (Supabase JWT, ~1h). Proper OAuth login is on the roadmap.
 
 ## 🚀 Quick Start
 

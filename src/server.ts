@@ -10,8 +10,9 @@ import { registerCandidaturaStats } from "./tools/candidatura-stats.js";
 /**
  * Creates and configures the Estagionauta MCP Server.
  * Registers all available tools for AI clients (Claude, Gemini, Cursor, etc.)
+ * `authToken` is used by authenticated tools when the call omits the `token` argument.
  */
-export function createServer(): McpServer {
+export function createServer(authToken?: string): McpServer {
   const server = new McpServer({
     name: "estagionauta-mcp",
     version: "0.1.0",
@@ -23,10 +24,10 @@ export function createServer(): McpServer {
   registerCalculateRecess(server);
   registerSearchAgencies(server);
   registerGetAgencyDetails(server);
-  registerCheckCredits(server);
-  registerRedeemCoupon(server);
-  registerCheckCandidatures(server);
-  registerCandidaturaStats(server);
+  registerCheckCredits(server, authToken);
+  registerRedeemCoupon(server, authToken);
+  registerCheckCandidatures(server, authToken);
+  registerCandidaturaStats(server, authToken);
 
   return server;
 }

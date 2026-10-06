@@ -21,6 +21,18 @@ function getApiUrl(): string {
   return "https://estagionauta-api-991344207740.southamerica-east1.run.app";
 }
 
+/**
+ * Picks the token passed as a tool argument, falling back to the one sent by the
+ * MCP connection (Authorization header on the Worker, ESTAGIONAUTA_TOKEN on stdio).
+ */
+export function requireToken(argToken?: string, connectionToken?: string): string {
+  const token = argToken || connectionToken;
+  if (!token) {
+    throw new Error("Missing authentication token: send an Authorization header or pass the token argument");
+  }
+  return token;
+}
+
 interface ApiResponse<T = unknown> {
   success?: boolean;
   error?: string;
