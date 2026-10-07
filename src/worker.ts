@@ -142,7 +142,9 @@ export default {
     // Create a fresh MCP server instance per request.
     // The MCP SDK does NOT allow connecting an already-connected server to a new transport.
     // Reusing a singleton server causes "Worker threw exception" (Cloudflare Error 1101).
-    const server = createServer();
+    const authHeader = request.headers.get("Authorization") || "";
+    const authToken = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : undefined;
+    const server = createServer(authToken);
     const mcpHandler = createMcpHandler(server);
     return mcpHandler(request, env, ctx);
   },

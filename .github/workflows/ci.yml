@@ -1,14 +1,14 @@
-name: Deploy to Cloudflare Workers
+name: CI
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
 jobs:
-  deploy:
+  build-and-test:
     runs-on: ubuntu-latest
-    name: Deploy
+    name: Build & Test
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -27,9 +27,3 @@ jobs:
 
       - name: Run Tests
         run: npm test
-
-      - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: deploy

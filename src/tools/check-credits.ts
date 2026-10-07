@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { apiGet } from "../lib/api-client.js";
+import { apiGet, requireToken } from "../lib/api-client.js";
 
 interface CreditBalanceResponse {
   credits: number;
@@ -23,14 +23,15 @@ interface Transaction {
  * Fetches the credit balance and recent transaction history for a user.
  * Calls GET /api/credits and GET /api/credits/transactions.
  */
-export function registerCheckCredits(server: McpServer): void {
+export function registerCheckCredits(server: McpServer, authToken?: string): void {
   server.tool(
     "check_credits",
     "Check your Estagionauta credit balance, subscription status, and optionally view recent transaction history.",
     {
       token: z
         .string()
-        .describe("Your Estagionauta access token (JWT) for authentication"),
+        .optional()
+        .describe("Your Estagionauta access token (JWT). Optional when the connection already sends an Authorization header"),
       includeHistory: z
         .boolean()
         .optional()
@@ -39,11 +40,12 @@ export function registerCheckCredits(server: McpServer): void {
     },
     async ({ token, includeHistory }) => {
       try {
+        const jwt = requireToken(token, authToken);
         // 1. Fetch balance
         const balance = await apiGet<CreditBalanceResponse>(
           "/api/credits",
           undefined,
-          token
+          jwt
         );
 
         const result: Record<string, any> = {
@@ -61,7 +63,7 @@ export function registerCheckCredits(server: McpServer): void {
           const transactions = await apiGet<Transaction[]>(
             "/api/credits/transactions",
             undefined,
-            token
+            jwt
           );
           result.history = transactions.map((t) => ({
             id: t.id,

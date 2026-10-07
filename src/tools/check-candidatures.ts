@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { apiGet } from "../lib/api-client.js";
+import { apiGet, requireToken } from "../lib/api-client.js";
 
 interface Application {
   id: string;
@@ -24,14 +24,15 @@ interface Application {
  * Fetches all internship applications on the user's Kanban board.
  * Calls GET /api/kanban.
  */
-export function registerCheckCandidatures(server: McpServer): void {
+export function registerCheckCandidatures(server: McpServer, authToken?: string): void {
   server.tool(
     "check_candidatures",
     "List your internship applications (candidaturas) registered in your Kanban board on Estagionauta. View company, position, current status, progress, and salary details.",
     {
       token: z
         .string()
-        .describe("Your Estagionauta access token (JWT) for authentication"),
+        .optional()
+        .describe("Your Estagionauta access token (JWT). Optional when the connection already sends an Authorization header"),
       status: z
         .enum([
           "interested",
@@ -50,7 +51,8 @@ export function registerCheckCandidatures(server: McpServer): void {
     },
     async ({ token, status }) => {
       try {
-        const data = await apiGet<Application[]>("/api/kanban", undefined, token);
+        const jwt = requireToken(token, authToken);
+        const data = await apiGet<Application[]>("/api/kanban", undefined, jwt);
 
         if (!Array.isArray(data) || data.length === 0) {
           return {

@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { apiPost } from "../lib/api-client.js";
+import { apiPost, requireToken } from "../lib/api-client.js";
 
 interface RedeemCouponResponse {
   success: boolean;
@@ -14,24 +14,26 @@ interface RedeemCouponResponse {
  * Redeems a promotional coupon code to add credits to the user's account.
  * Calls POST /api/credits/redeem.
  */
-export function registerRedeemCoupon(server: McpServer): void {
+export function registerRedeemCoupon(server: McpServer, authToken?: string): void {
   server.tool(
     "redeem_coupon",
     "Redeem a promotional coupon code (e.g. ESTAGIO100, BOASVINDAS) to add credits to your Estagionauta account. Requires your authentication token and the coupon code.",
     {
       token: z
         .string()
-        .describe("Your Estagionauta access token (JWT) for authentication"),
+        .optional()
+        .describe("Your Estagionauta access token (JWT). Optional when the connection already sends an Authorization header"),
       code: z
         .string()
         .describe("The coupon code to redeem (case-insensitive, e.g. 'ESTAGIO100')"),
     },
     async ({ token, code }) => {
       try {
+        const jwt = requireToken(token, authToken);
         const data = await apiPost<RedeemCouponResponse>(
           "/api/credits/redeem",
           { code },
-          token
+          jwt
         );
 
         const result = {
