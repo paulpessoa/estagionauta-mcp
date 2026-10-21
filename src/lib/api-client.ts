@@ -18,7 +18,7 @@ function getApiUrl(): string {
     // Ignore
   }
 
-  return "https://estagionauta-api-991344207740.southamerica-east1.run.app";
+  return "https://estagionauta-api.onrender.com";
 }
 
 /**

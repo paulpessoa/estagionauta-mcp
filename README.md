@@ -133,7 +133,7 @@ npm run deploy      # deploy to Cloudflare Workers (needs wrangler login)
 
 | Variable | Default | Description |
 |:---------|:--------|:------------|
-| `ESTAGIONAUTA_API_URL` | `https://estagionauta-api-991344207740.southamerica-east1.run.app` | Estagionauta API base URL |
+| `ESTAGIONAUTA_API_URL` | `https://estagionauta-api.onrender.com` | Estagionauta API base URL |
 
 ## 🌐 Compatible Clients
 

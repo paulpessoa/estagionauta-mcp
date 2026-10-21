@@ -3,7 +3,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { createServer } from "../src/server.js";
 
-const API = "https://estagionauta-api-991344207740.southamerica-east1.run.app";
+const API = "https://estagionauta-api.onrender.com";
 
 async function connect(authToken?: string) {
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
